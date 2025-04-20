@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 	// calculations.
 	//
   auto start = chrono::high_resolution_clock::now();
-    
+    // parallelize over collapsed matrix to ensure all threads are being utilized
   	#pragma omp parallel for collapse(2) num_threads(_numThreads) schedule(dynamic, 8)
 	for (int r = 0; r < wm.num_rows(); r++) {
 		for (int c = 0; c < wm.num_cols(); c++) {
@@ -81,6 +81,8 @@ int main(int argc, char *argv[])
 			//
 			// show some output every 100 cells so we see progress:
 			//
+
+			// race condition: cells is a shared variable across all threads.
 			#pragma omp atomic
 			cells++;
 
